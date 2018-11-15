@@ -3,8 +3,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 RF24 radio(7, 8); // CE, CSN
-const byte address[6] = "00001";
-
+const byte addresses[][6] = {"00001", "00002"};
 
 int PUSH_PIN            = 4;
 int JOYX_PIN            = A0;
@@ -34,15 +33,14 @@ void setup() {
   initPins();
   Serial.begin(9600);
   radio.begin();
-  radio.openWritingPipe(address);
+  radio.openWritingPipe(addresses[1]);    // 00001
+  radio.openReadingPipe(1, addresses[0]); // 00002
   radio.setPALevel(RF24_PA_MIN);
-  radio.stopListening();
+  //radio.stopListening();
 }
 void loop() {
-  //const char text[] = "Hello World";
-  //radio.write(&text, sizeof(text));
-  //delay(1000);
-
+  delay(5);
+  radio.stopListening();
 
   X_val = analogRead(JOYX_PIN);
   Y_val = analogRead(JOYY_PIN);
@@ -59,11 +57,21 @@ void loop() {
   } else {
     cmd[1] = 0;
   }
-  command();
-  delay(100);
+  //start transmitting command to receiver
+  sendCommand();
+
+  // Start listening receiver's reply
+  delay(5);
+  radio.startListening();
+
+  while (!radio.available());
+  char text[32] = "";
+  radio.read(&text, sizeof(text));
+  Serial.print("RECEIVER REPLY: ");
+  Serial.println(text);
 }
 
-void command() {
+void sendCommand() {
   String cmds;
   for (int i = 0; i < 2; i++) {
     char c = cmd[i];
