@@ -22,6 +22,7 @@ int wiperMiddlePoint    = 512 / 2;  // result will be the middle point of wiper,
 int wiperThreshold      = 180;      // it helps reading sensitivity of the Z-axis/Wiper
 int axisThreshold       = 80;       // it helps reading sensitivity X & Y axis
 
+int i = 0;
 void initPins() {
   pinMode(JOYX_PIN, INPUT);
   pinMode(JOYY_PIN, INPUT);
@@ -32,14 +33,23 @@ void initPins() {
 void setup() {
   initPins();
   Serial.begin(9600);
+
   radio.begin();
   radio.openWritingPipe(addresses[1]);    // 00001
   radio.openReadingPipe(1, addresses[0]); // 00002
   radio.setPALevel(RF24_PA_MIN);
   //radio.stopListening();
+  Serial.println("Transmitter Started");
 }
-void loop() {
+
+void acknowledge() {
   delay(5);
+  radio.stopListening();
+
+}
+
+void loop() {
+  delay(2);
   radio.stopListening();
 
   X_val = analogRead(JOYX_PIN);
@@ -61,14 +71,18 @@ void loop() {
   sendCommand();
 
   // Start listening receiver's reply
-  delay(5);
+  delay(2);
   radio.startListening();
 
-  while (!radio.available());
-  char text[32] = "";
-  radio.read(&text, sizeof(text));
-  Serial.print("RECEIVER REPLY: ");
-  Serial.println(text);
+  //while (!radio.available());
+  if (radio.available()) {
+    while (radio.available()) {
+      char text[32] = "";
+      radio.read(&text, sizeof(text));
+      Serial.print("received reply: ");
+      Serial.println(text);
+    }
+  }
 }
 
 void sendCommand() {
