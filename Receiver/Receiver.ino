@@ -58,6 +58,8 @@ void sendReply(char *receive_command) {
       reply_msg = "WIPER RIGHT";
     } else if (cmds == "ON") {
       reply_msg = "ON received";
+    } else if (cmds == "PUSH") {
+      reply_msg = "PUSH received";
     } else {
     }
     char text[32] =  "";

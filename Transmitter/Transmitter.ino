@@ -116,8 +116,8 @@ void sendCommand() {
     } else {
       /* if no wiper command to transmit then let's check the push button state */
       if (pushState == HIGH) {
-        //Serial.println("ON");
-        const char text[] = "ON";
+        //Serial.println("PUSH");
+        const char text[] = "PUSH";
         radio.write(&text, sizeof(text));
       } else {
         //turn_off();
