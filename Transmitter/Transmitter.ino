@@ -73,7 +73,7 @@ void loop() {
   // Start listening receiver's reply
   delay(2);
   radio.startListening();
-
+  delay(2);
   //while (!radio.available());
   if (radio.available()) {
     while (radio.available()) {

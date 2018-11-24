@@ -7,7 +7,7 @@ const byte addresses[][6] = {"00001", "00002"};
 void setup() {
   Serial.begin(9600);
   radio.begin();
-  radio.openWritingPipe(addresses[0]); // 00002
+  radio.openWritingPipe(addresses[0]);    // 00002
   radio.openReadingPipe(1, addresses[1]); // 00001
   radio.setPALevel(RF24_PA_MIN);
   //radio.startListening();
@@ -65,8 +65,7 @@ void sendReply(char *receive_command) {
     char text[32] =  "";
     reply_msg.toCharArray(text, sizeof(text));
     radio.write(&text, sizeof(text));
-
-    //radio.write(&reply_msg, sizeof(reply_msg));
+    
     Serial.print("received: ");
     Serial.print(cmds);
     Serial.print("\t reply :");
